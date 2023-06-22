@@ -5,6 +5,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
 import kotlin.random.Random
 
 class TimerOperation {
@@ -14,20 +15,26 @@ class TimerOperation {
     ): Boolean = withContext(
         Dispatchers.IO
     ){
-        launch {
+        val timedBoolean = timedExit()
+        Log.e("OPERATION", "randomized boolean = $timedBoolean")
+        timedBoolean ?: false
+    }
+
+    private suspend fun timedExit(
+    ): Boolean? {
+        val timeBoolean = withTimeoutOrNull(4000) {
             randomizedTimerBoolean()
         }
-        delay(4000)
-        Log.e("OPERATION", "randomized boolean = $randomizedBoolean")
-        randomizedBoolean
+        return timeBoolean
     }
 
     private suspend fun randomizedTimerBoolean(
-    ){
-        val randomTimer = Random.nextInt(1, 10)
+    ): Boolean {
+        val randomTimer = Random.nextInt(1, 20)
         Log.e("OPERATION", "random timer = $randomTimer")
         delay((randomTimer*1000).toLong())
         randomizedBoolean = true
         Log.e("OPERATION", "random timer completed")
+        return true
     }
 }
