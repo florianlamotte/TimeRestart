@@ -15,26 +15,26 @@ class TimerOperation {
     ): Boolean = withContext(
         Dispatchers.IO
     ){
+        randomizedBoolean = false
         val timedBoolean = timedExit()
         Log.e("OPERATION", "randomized boolean = $timedBoolean")
         timedBoolean ?: false
     }
 
     private suspend fun timedExit(
-    ): Boolean? {
-        val timeBoolean = withTimeoutOrNull(4000) {
+    ): Boolean {
+        withTimeoutOrNull(4000) {
             randomizedTimerBoolean()
         }
-        return timeBoolean
+        return randomizedBoolean
     }
 
     private suspend fun randomizedTimerBoolean(
-    ): Boolean {
+    ) {
         val randomTimer = Random.nextInt(1, 20)
         Log.e("OPERATION", "random timer = $randomTimer")
         delay((randomTimer*1000).toLong())
         randomizedBoolean = true
         Log.e("OPERATION", "random timer completed")
-        return true
     }
 }
