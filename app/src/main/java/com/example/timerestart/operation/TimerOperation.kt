@@ -20,35 +20,33 @@ class TimerOperation {
 
     suspend operator fun invoke(
     ): Boolean = withContext(
-        Dispatchers.IO
-    ){
-        launch(Dispatchers.Default) {
+        Dispatchers.Default
+    ) {
+        val job = launch {
             randomizedTimerBoolean()
         }
         timedLock()
+        job.cancel()
         Log.e("OPERATION", "randomized boolean = $randomizedBoolean")
         randomizedBoolean
     }
 
     private suspend fun timedLock(
     ) {
-        Log.e("OPERATION", "timedLock - START")
+        Log.e("OPERATION", "timedLock - LOCKED")
         withTimeoutOrNull(6000) {
-            launch(Dispatchers.Default) {
-                Log.e("OPERATION", "LOCKED")
-                lock.lock()
-                Log.e("OPERATION", "UNLOCKED")
-            }
+            lock.lock()
+            Log.e("OPERATION", "timedLock - UNLOCKED")
         }
         Log.e("OPERATION", "timedLock - END")
     }
 
     private suspend fun randomizedTimerBoolean(
     ) {
-        val randomTimer = Random.nextInt(1, 20)
-        Log.e("OPERATION", "random timer = $randomTimer")
-        delay((randomTimer*1000).toLong())
+        val randomTimer = Random.nextInt(1, 12)
+        Log.e("OPERATION", "randomizedTimer - started = $randomTimer")
+        delay((randomTimer * 1000).toLong())
+        Log.e("OPERATION", "randomizedTimer - ended")
         randomizedBoolean = true
-        Log.e("OPERATION", "random timer completed")
     }
 }
